@@ -105,8 +105,8 @@ From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
   sed -i -e "s#props_path = \"stereo_chemical_props.txt\"#props_path = \"${COLABFOLDDIR}/stereo_chemical_props.txt\"#" batch.py
   wget -q https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
   wget https://raw.githubusercontent.com/deepmind/alphafold/main/docker/openmm.patch
-  (cd  /opt/conda/lib/python3.7/site-packages; patch -s -p0 < openmm.patch)
-  rm openmm.patch
+  (cd  /opt/conda/lib/python3.7/site-packages; wget https://raw.githubusercontent.com/deepmind/alphafold/main/docker/openmm.patch; patch -s -p0 < openmm.patch; rm openmm.patch)
+  (cd  /opt/conda/lib/python3.7/site-packages/colabfold/; wget https://raw.githubusercontent.com/tubiana/colabfold_singularity/main/matplotlib.patch; patch -s -p0 < matplotlib.patch; rm matplotlib.patch)
 
 %labels
   author thibault Tubiana
