@@ -1,0 +1,12 @@
+--- plot.py.orig        2022-04-28 08:17:42.790550279 +0200
++++ plot.py     2022-04-28 08:19:02.606859815 +0200
+@@ -2,7 +2,8 @@
+
+ import numpy as np
+ from matplotlib import pyplot as plt
+-
++import matplotlib
++matplotlib.use("Agg")
+
+ def plot_predicted_alignment_error(
+     jobname: str, num_models: int, outs: dict, result_dir: Path, show: bool = False
