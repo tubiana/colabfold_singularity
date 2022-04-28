@@ -11,7 +11,7 @@ MINIMISATION="--amber --use-gpu-relax" # COMMENT To remove minimisation
 NUMRECYCLE=3 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
 
 DBLOADMODE=3 #3 = faster reading but do not take advantage of cached files. 2 is faster when the databse is already in the memory.
-USEENV=0 # 0 = do not use environmental database, 1=Use environmentale databse.
+USEENV=1 # 0 = do not use environmental database, 1=Use environmentale databse. 
 
 DOALIGNMENT=true # Comment or set to false if you already have a folder called "msas" with an a3m MSA inside.
 DOMODELS=true # Comment or set to false if you don't want to make the models (only generate MSAS)
@@ -62,7 +62,7 @@ if [ "$DOALIGNMENT" == true ]; then
   	    --max-accept 10 \
   	    --db-load-mode $DBLOADMODE \
             --thread 24 \
-  	    /inout/fasta/${FASTA_FILE} /alpha/database/ /inout/msas #> outalign.txt 2>&1
+  	    /inout/fasta/${FASTA_FILE} /alpha/database/ /inout/msas > outalign.txt 2>&1
   rm searchingSequences
   touch searchingSequencesDone
   
