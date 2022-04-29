@@ -2,7 +2,6 @@ from glob import glob
 import os
 import numpy as np
 from pathlib import Path
-os.chdir("/Users/thibault/Downloads/uniref_env/multimer/")
 
 
 
@@ -27,6 +26,7 @@ numfolder = len(models[0].split('/'))
 relaxed_or_notrelaxed = {}
 cmdload = ''
 rename = ''
+
 
 if numfolder > 2:
     group=True
