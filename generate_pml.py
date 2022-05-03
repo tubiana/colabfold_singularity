@@ -65,6 +65,9 @@ util.cnc
 set opaque_background; 0
 remove symbol H
 
+spectrum b, rainbow_rev, minimum=10, maximum=90
+
+
 """
 with open('visualisation.pml','w') as out:
     out.write(pml)
