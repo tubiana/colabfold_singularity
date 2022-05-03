@@ -2,9 +2,14 @@ from glob import glob
 import os
 import numpy as np
 from pathlib import Path
+import sys
 
-
-
+print("Basic pyton script to generate pymol file for alphafold models")
+print("Improvement will come late...")
+print("USAGE : ")
+print("  1. Go to your working directory (where you have the folder 'predictions' but do not go inside'")
+print("  2. pythyon generate_pml.py")
+print("  3. pymol visualisation.pml")
 
 def keep_relax(models):
     keep = []
@@ -74,6 +79,7 @@ spectrum b, rainbow_rev, minimum=10, maximum=90
 
 
 """
+
 with open('visualisation.pml','w') as out:
     out.write(pml)
 
