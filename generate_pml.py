@@ -20,6 +20,11 @@ def keep_relax(models):
     return keep
 
 models=glob("predictions/**/*.pdb")
+if len(models) == 0:
+    models = glob("predictions/*.pdb")
+    if len(models) == 0:
+        print("no models found")
+        sys.exit(0)
 models = keep_relax(models)
 
 numfolder = len(models[0].split('/'))
