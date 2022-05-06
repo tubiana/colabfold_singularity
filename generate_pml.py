@@ -37,6 +37,7 @@ relaxed_or_notrelaxed = {}
 cmdload = ''
 rename = ''
 firstname = ''
+groupcmd = ""
 
 
 if numfolder > 2:
@@ -47,32 +48,25 @@ if numfolder > 2:
         if "_relaxed" in tmp[0]:
             relaxed_or_notrelaxed[f] = "relaxed"
             labelRelaxed = "mini"
+            cmdload = cmdload+f'loadall predictions/{f}/*_relaxed*.pdb\n'
         else:
             relaxed_or_notrelaxed[f] = "unrelaxed"
-            cmdload = cmdload+f'loadall predictions/{f}/*_unrelaxed*.pdb, {f}\n'
+            cmdload = cmdload+f'loadall predictions/{f}/*_unrelaxed*.pdb\n'
             rename = "alter chain B, chain='A'\nalter chain C, chain='B'\n"
             labelRelaxed = "noMini"
             #cmdload = cmdload+f'loadall predictions/{f}/*_relaxed*.pdb, {f}\n'
+        groupcmd = groupcmd + f"group {f}, {f}_*\n"
 else: 
     group = False
     cmdload = ''
     if "_relaxed" in models[0]:
-        # cmdload = cmdload+f'loadall predictions/*_relaxed*.pdb'
+        cmdload = cmdload+f'loadall predictions/*_relaxed*.pdb'
         labelRelaxed = "mini"
     else:
-        # cmdload = cmdload+f'loadall predictions/*_unrelaxed*.pdb'
+        cmdload = cmdload+f'loadall predictions/*_unrelaxed*.pdb'
         rename = "alter chain B, chain='A'\nalter chain C, chain='B'\n"
         labelRelaxed = "noMini"
 
-    #Load strings
-    import re
-    regex = re.compile("._rank_(\d+)_model_(\d+)")
-    for m in models:
-        rank, model = regex.findall(m)[0]
-        newname = f"{f}_r{rank}m{model}_{labelRelaxed}"
-        cmdload = cmdload + f"load {m}, {newname}\n"
-        if firstname == "":
-            firstname = newname
 
 
 
@@ -86,9 +80,9 @@ cmd.run('http://pldserver1.biochem.queensu.ca/~rlc/work/pymol/align_all.py')
 {rename}
 
 #Align on first model
-objectlist = cmd.get_object_list()
-
 align_all {Path(models[0]).stem},  b>70
+
+{groupcmd}
 
 as cartoon
 set grid_mode, 1
