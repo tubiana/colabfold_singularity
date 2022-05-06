@@ -74,7 +74,7 @@ input = open("$file", 'r')
 while input:
     line=input.readline()
     if line.startswith('>'):
-        name=line[1:].strip().split('\t')[0]
+        name=line.replace('>','').strip().split('\t')[0]
         print(name)
         break
 EOF
