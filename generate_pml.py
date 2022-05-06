@@ -45,6 +45,11 @@ if numfolder > 2:
         tmp = [x for x in models if f in x.split('/')[1]]
         if "_relaxed" in tmp[0]:
             relaxed_or_notrelaxed[f] = "relaxed"
+            import re
+            regex = re.compile("._rank_(\d+)_model_(\d+)")
+            for m in models:
+                print(regex.findall(m))
+                print(m)
             cmdload = cmdload+f'loadall predictions/{f}/*_relaxed*.pdb, {f}\n'
         else:
             relaxed_or_notrelaxed[f] = "unrelaxed"
@@ -54,11 +59,6 @@ else:
     group = False
     cmdload = ''
     if "_relaxed" in models[0]:
-        import re
-        regex = re.compile("._rank_(\d+)_model_(\d+)")
-        for m in models:
-            print(regex.findall(m))
-            print(m)
         cmdload = cmdload+f'loadall predictions/*_relaxed*.pdb'
     else:
         cmdload = cmdload+f'loadall predictions/*_unrelaxed*.pdb'
