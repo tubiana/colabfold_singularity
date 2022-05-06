@@ -54,6 +54,11 @@ else:
     group = False
     cmdload = ''
     if "_relaxed" in models[0]:
+        import re
+        regex = re.compile("._rank_(\d+)_model_(\d+)")
+        for m in models:
+            print(regex.findall(m))
+            print(m)
         cmdload = cmdload+f'loadall predictions/*_relaxed*.pdb'
     else:
         cmdload = cmdload+f'loadall predictions/*_unrelaxed*.pdb'
