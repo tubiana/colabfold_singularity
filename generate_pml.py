@@ -52,26 +52,27 @@ if numfolder > 2:
             cmdload = cmdload+f'loadall predictions/{f}/*_unrelaxed*.pdb, {f}\n'
             rename = "alter chain B, chain='A'\nalter chain C, chain='B'\n"
             labelRelaxed = "noMini"
-
-        #Load strings
-        import re
-        regex = re.compile("._rank_(\d+)_model_(\d+)")
-        for m in models:
-            rank, model = regex.findall(m)
-            newname = f"{f}_r{rank}m{model}_{labelRelaxed}"
-            cmdload = cmdload + f"load {m}, {newname}\n"
-            if firstname == "":
-                firstname = newname
-
             #cmdload = cmdload+f'loadall predictions/{f}/*_relaxed*.pdb, {f}\n'
 else: 
     group = False
     cmdload = ''
     if "_relaxed" in models[0]:
-        cmdload = cmdload+f'loadall predictions/*_relaxed*.pdb'
+        # cmdload = cmdload+f'loadall predictions/*_relaxed*.pdb'
+        labelRelaxed = "mini"
     else:
-        cmdload = cmdload+f'loadall predictions/*_unrelaxed*.pdb'
+        # cmdload = cmdload+f'loadall predictions/*_unrelaxed*.pdb'
         rename = "alter chain B, chain='A'\nalter chain C, chain='B'\n"
+        labelRelaxed = "noMini"
+
+    #Load strings
+    import re
+    regex = re.compile("._rank_(\d+)_model_(\d+)")
+    for m in models:
+        rank, model = regex.findall(m)[0]
+        newname = f"{f}_r{rank}m{model}_{labelRelaxed}"
+        cmdload = cmdload + f"load {m}, {newname}\n"
+        if firstname == "":
+            firstname = newname
 
 
 
