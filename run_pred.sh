@@ -69,7 +69,7 @@ if [ "$DOALIGNMENT" == true ]; then
   cd msas
   echo "Renaming A3M files"
   for file in `ls *.a3m`; do
-  filename=`python <<EOF
+  filename=`python3 <<EOF
 input = open("$file", 'r')
 while input:
     line=input.readline()
