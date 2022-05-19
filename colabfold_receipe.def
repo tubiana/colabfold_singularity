@@ -11,8 +11,8 @@ From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
 
 %environment
   #Define environment variable that will be executed at each runtime.
-  export TF_FORCE_UNIFIED_MEMORY="1"
-  export XLA_PYTHON_CLIENT_MEM_FRACTION="4.0"
+  export TF_FORCE_UNIFIED_MEMORY=1
+  export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
   export OPENMM_CPU_THREADS=8
   export CUDA=11.1
   export PATH=/opt/mmseqs/bin/:$PATH
