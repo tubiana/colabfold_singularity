@@ -2,7 +2,7 @@
 
 
 # 1. ===== PARAMETER SETINGS <- NEED TO BE MODIFY AT EVERYRUN ========
-JOBNAME="CHANGEME" #<--- name of the the fasta file, WITHOUT the extension
+JOBNAME="CHANGEME"  #<--- name of the the fasta file, WITHOUT the extension
 FASTA_DIR="CHANGEME" #DIRECTORY OF THE FASTA FILE
 
 #  Default Options. Change it if you want :-) 
