@@ -6,7 +6,7 @@ JOBNAME="CHANGEME" #<--- name of the the fasta file, WITHOUT the extension
 FASTA_DIR="CHANGEME" #DIRECTORY OF THE FASTA FILE
 
 #  Default Options. Change it if you want :-) 
-MODELTYPE="AlphaFold2-ptm" #COULD BE AlphaFold2-multimer-v1, AlphaFold2-multimer-v2, AlphaFold2-ptm, auto
+MODELTYPE="auto" #COULD BE AlphaFold2-multimer-v1, AlphaFold2-multimer-v2, AlphaFold2-ptm, auto
 MINIMISATION="--amber --use-gpu-relax" # COMMENT To remove minimisation
 NUMRECYCLE=3 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
 
