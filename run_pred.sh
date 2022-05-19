@@ -8,7 +8,7 @@ FASTA_DIR="CHANGEME" #DIRECTORY OF THE FASTA FILE
 #  Default Options. Change it if you want :-) 
 MODELTYPE="auto" #COULD BE AlphaFold2-multimer-v1, AlphaFold2-multimer-v2, AlphaFold2-ptm, auto
 MINIMISATION="--amber --use-gpu-relax" # COMMENT To remove minimisation
-NUMRECYCLE=3 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
+NUMRECYCLE=6 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
 
 DBLOADMODE=3 #3 = faster reading but do not take advantage of cached files. 2 is faster when the databse is already in the memory.
 USEENV=1 # 0 = do not use environmental database, 1=Use environmentale databse. 
