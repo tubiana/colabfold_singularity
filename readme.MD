@@ -1,5 +1,9 @@
 # Commands to create the singularity image for AlphaFold
 
+**UPDATE:**  
+You can use the script `0.insgtall_colabfold_local.sh` to install everything from scratch.
+Just change the variable `$INSTALLDIR` with your location folder.
+
 ## Requirement
 All the instruction are available in the syslab.io website (https://sylabs.io/guides/3.0/user-guide/installation.html#install-from-source)
 
