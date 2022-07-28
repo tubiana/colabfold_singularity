@@ -14,7 +14,7 @@ INSTALLDIR=/mnt/DATASPEED/alphafold
 mkdir -p $INSTALLDIR/database
 mkdir -p $INSTALLDIR/params
 mkdir -p $INSTALLDIR/container
-github clone https://github.com/tubiana/colabfold_singularity $INSTALLDIR/scripts
+git clone https://github.com/tubiana/colabfold_singularity $INSTALLDIR/scripts
 
 
 #1. Install Singularity 
@@ -24,7 +24,7 @@ sudo bash Install_singularity.sh
 
 #2. Install Databases (can take A LOT OF TIME)
 echo "Installing Databases"
-cd $INSTALLDIR/database
+cd $INSTALLDIR
 
 #Install a localcopy of mmseqs to unpack the databse
 wget https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz;
