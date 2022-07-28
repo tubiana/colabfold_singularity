@@ -13,7 +13,7 @@ From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
   #Define environment variable that will be executed at each runtime.
   export TF_FORCE_UNIFIED_MEMORY=1
   export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
-  export OPENMM_CPU_THREADS=8
+  export OPENMM_CPU_THREADS=32
   export CUDA=11.1
   export PATH=/opt/mmseqs/bin/:$PATH
 
@@ -64,9 +64,9 @@ From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
 
   # Install Miniconda package manager.
   wget -q -P /tmp \
-    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-      && bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda \
-      && rm /tmp/Miniconda3-latest-Linux-x86_64.sh
+    https://repo.anaconda.com/miniconda/Miniconda3-py37_4.9.2-Linux-x86_64.sh \
+      && bash /tmp/Miniconda3-py37_4.9.2-Linux-x86_64.sh -b -p /opt/conda \
+      && rm /tmp/Miniconda3-py37_4.9.2-Linux-x86_64.sh
 
   #Add conda in the PATH.
   export PATH=/opt/conda/bin:$PATH
@@ -76,27 +76,28 @@ From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
   conda update -qy conda \
       && conda install -y -c conda-forge \
         openmm=7.5.1 \
-        cudatoolkit==${CUDA_VERSION} \
         pdbfixer \
         pip \
-        python=3.7
+        #cudatoolkit==${CUDA} \
+
+
 
   #Install alignment tools.
   conda install -c conda-forge -c bioconda kalign3=3.2.2 hhsuite=3.3.0 -y
 
   
   #Install ColabFold and Jaxlib
-  pip install --no-warn-conflicts "colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold"
+  pip install --no-warn-conflicts "colabfold[alphafold] @ git+https://github.com/sokrypton/ColabFold"
   pip install "jax[cuda11_cudnn805]>=0.3.8,<0.4" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
 
 
-  #Apply patches and parameters
-  cd $COLABFOLDDIR
-  sed -i -e "s#props_path = \"stereo_chemical_props.txt\"#props_path = \"${COLABFOLDDIR}/stereo_chemical_props.txt\"#" batch.py
-  wget -q https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
-  wget https://raw.githubusercontent.com/deepmind/alphafold/main/docker/openmm.patch
-  (cd  /opt/conda/lib/python3.7/site-packages; wget https://raw.githubusercontent.com/deepmind/alphafold/main/docker/openmm.patch; patch -s -p0 < openmm.patch; rm openmm.patch)
-  (cd  /opt/conda/lib/python3.7/site-packages/colabfold/; wget https://raw.githubusercontent.com/tubiana/colabfold_singularity/main/matplotlib.patch; patch -s -p0 < matplotlib.patch; rm matplotlib.patch)
+  # #Apply patches and parameters
+  # cd $COLABFOLDDIR
+  # sed -i -e "s#props_path = \"stereo_chemical_props.txt\"#props_path = \"${COLABFOLDDIR}/stereo_chemical_props.txt\"#" batch.py
+  # wget -q https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
+  # wget https://raw.githubusercontent.com/deepmind/alphafold/main/docker/openmm.patch
+  # (cd  /opt/conda/lib/python3.7/site-packages; wget https://raw.githubusercontent.com/deepmind/alphafold/main/docker/openmm.patch; patch -s -p0 < openmm.patch; rm openmm.patch)
+  # (cd  /opt/conda/lib/python3.7/site-packages/colabfold/; wget https://raw.githubusercontent.com/tubiana/colabfold_singularity/main/matplotlib.patch; patch -s -p0 < matplotlib.patch; rm matplotlib.patch)
 
 %labels
   author thibault Tubiana

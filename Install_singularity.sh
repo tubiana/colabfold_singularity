@@ -9,7 +9,8 @@ sudo apt-get update && sudo apt-get install -y \
     squashfs-tools \
     libseccomp-dev \
     pkg-config\
-    golang-go
+    golang-go \
+    aria2
 
 # Download GO
 export VERSION=1.13 OS=linux ARCH=amd64
