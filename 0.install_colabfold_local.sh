@@ -19,6 +19,7 @@ github clone https://github.com/tubiana/colabfold_singularity $INSTALLDIR/script
 
 #1. Install Singularity 
 echo "Installing Singularity"
+wget https://raw.githubusercontent.com/tubiana/colabfold_singularity/main/Install_singularity.sh
 sudo bash Install_singularity.sh
 
 #2. Install Databases (can take A LOT OF TIME)
