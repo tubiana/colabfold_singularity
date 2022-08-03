@@ -3,11 +3,12 @@
 
 # 1. ===== PARAMETER SETINGS <- NEED TO BE MODIFY AT EVERYRUN ========
 JOBNAME="CHANGEME"  #<--- name of the the fasta file, WITHOUT the extension
-FASTA_DIR="CHANGEME" #DIRECTORY OF THE FASTA FILE
+FASTA_DIR=`pwd` #DIRECTORY OF THE FASTA FILE
 
 #  Default Options. Change it if you want :-) 
 MODELTYPE="auto" #COULD BE AlphaFold2-multimer-v1, AlphaFold2-multimer-v2, AlphaFold2-ptm, auto
 MINIMISATION="--amber --use-gpu-relax" # COMMENT To remove minimisation
+NMER=1 #Number of MERS, 2 for DIMERS (symetrical), 3 for Trimers..... /!\ IT IS DIFFERENT FROM MULTIMERS WITH 2 SEQUENCES SEPARATED BY ':'
 NUMRECYCLE=3 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
 
 DBLOADMODE=3 #3 = faster reading but do not take advantage of cached files. 2 is faster when the databse is already in the memory.
@@ -17,14 +18,13 @@ DOALIGNMENT=true # Comment or set to false if you already have a folder called "
 DOMODELS=true # Comment or set to false if you don't want to make the models (only generate MSAS)
 GPUINDEX=0 #For multiGPU nodes, select only the GPU 0. Change to your favourite GPU number!
 
-
 # 2. ===== other parameters, don't change if except if you know what you are doing :-) 
 FASTA_FILE=${JOBNAME}.fasta #FASTA NAME
 MSA_DIR=${FASTA_DIR}/msas #FOLDER THAT WILL CONTAIN THE MSA
 PRED_DIR=${FASTA_DIR}/predictions #FOLDER THAT WILL CONTAIN PREDICTIONS
-PARAMS_DIR=/home/alphafold/params
-DATABASES=/home/alphafold/database
-IMAGESINGULARITY=/home/alphafold/container/colabfold_current.sif #LOCATION OF THE SINGULARITY IMAGE
+PARAMS_DIR=/mnt/DATASPEED/alphafold/params
+DATABASES=/mnt/DATASPEED/alphafold/database
+IMAGESINGULARITY=/mnt/DATASPEED/alphafold/container/colabfold_current.sif #LOCATION OF THE SINGULARITY IMAGE
 
 # 3. ==== Creation of the output dir in the $FASTA_DIR
 mkdir -p ${FASTA_DIR} &> /dev/null
@@ -84,6 +84,14 @@ EOF
   done
   cd ..
 fi
+
+#Replace the models to have NMERS (per default : 1)
+for file in `ls msas/*.a3m`;
+  do
+  echo $file
+  sed -i -E "s|(#[0-9]*\t)[0-9]+|\1$NMER|g" $file
+done
+
 
 if [ "$DOMODELS" == true ]; then
   echo "-- Doing models --"
