@@ -39,6 +39,10 @@ SINGULARITYCOMAND="singularity exec \
  -B ${DATABASES}:/alpha/database\
  -B ${FASTA_DIR}:/inout/fasta\
  -B ${PARAMS_DIR}:/opt/cache\
+ --env XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 \
+ --env TF_FORCE_UNIFIED_MEMORY=1\
+ --env XLA_PYTHON_CLIENT_PREALLOCATE=false\
+ --env TF_FORCE_GPU_ALLOW_GROWTH=true\
  -B ${MSA_DIR}:/inout/msas -B ${PRED_DIR}:/inout/predictions --nv ${IMAGESINGULARITY}"
 
 
