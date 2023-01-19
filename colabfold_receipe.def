@@ -72,24 +72,28 @@ From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
   export PATH=/opt/conda/bin:$PATH
 
 
-  #Install necessary soft with conda.
-  conda update -qy conda \
-      && conda install -y -c conda-forge \
+  # Install necessary soft with conda.
+  # conda update -qy conda \
+  #    && 
+  conda install -y -c bioconda -c conda-forge \
         openmm=7.5.1 \
         pdbfixer \
         pip \
+        kalign3=3.2.2 \
+        hhsuite=3.3.0
         #cudatoolkit==${CUDA} \
 
 
 
   #Install alignment tools.
-  conda install -c conda-forge -c bioconda kalign3=3.2.2 hhsuite=3.3.0 -y
+  #conda install -c conda-forge -c bioconda kalign3=3.2.2 hhsuite=3.3.0 -y
 
   
   #Install ColabFold and Jaxlib
-  pip install --no-warn-conflicts "colabfold[alphafold] @ git+https://github.com/sokrypton/ColabFold"
-  pip install https://storage.googleapis.com/jax-releases/cuda11/jaxlib-0.3.10+cuda11.cudnn82-cp37-none-manylinux2014_x86_64.whl
-  pip install jax==0.3.13
+  #UPDATE ALPHAFOLD 2.3
+  pip install -q --no-warn-conflicts "colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold@beta"
+  pip install https://storage.googleapis.com/jax-releases/cuda11/jaxlib-0.3.25+cuda11.cudnn805-cp37-cp37m-manylinux2014_x86_64.whl
+
 
   #Patch Colabfold batch.py to remove environment variable for GPU memory. Those variable are setted up externally.
   (cd  /opt/conda/lib/python3.7/site-packages/colabfold/; wget https://raw.githubusercontent.com/tubiana/colabfold_singularity/main/remove_environ_variable.patch; patch -s -p0 < remove_environ_variable.patch; rm remove_environ_variable.patch)

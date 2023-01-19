@@ -20,7 +20,7 @@ def keep_relax(models):
                 if relaxed not in keep:
                     keep.append(relaxed)
             else:
-                keep.append("model")
+                keep.append(model)
 
     return keep
 
@@ -39,7 +39,7 @@ rename = ''
 firstname = ''
 groupcmd = ""
 
-
+print(models)
 if numfolder > 2:
     group=True
     folders=list(np.unique([x.split('/')[1] for x in models]))
@@ -74,7 +74,7 @@ else:
 
 pml = f"""
 from pymol import cmd
-cmd.run('http://pldserver1.biochem.queensu.ca/~rlc/work/pymol/align_all.py')
+#cmd.run('http://pldserver1.biochem.queensu.ca/~rlc/work/pymol/align_all.py')
 
 {cmdload}
 {rename}
