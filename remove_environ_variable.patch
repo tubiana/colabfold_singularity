@@ -1,12 +1,11 @@
---- batch.py	2022-07-06 10:21:39.736076066 +0200
-+++ batch.patched.py	2022-08-24 14:38:18.050765075 +0200
-@@ -2,8 +2,6 @@
+--- batch.py    2023-02-05 15:14:15.610485278 +0100
++++ batch_patch.py      2023-02-05 15:14:31.074484613 +0100
+@@ -1,8 +1,6 @@
+ from __future__ import annotations
  
  import os
- 
 -os.environ["TF_FORCE_UNIFIED_MEMORY"] = "1"
 -os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "2.0"
  
  import json
  import logging
-

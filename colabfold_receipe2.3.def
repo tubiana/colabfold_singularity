@@ -1,0 +1,137 @@
+Bootstrap: docker
+From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
+
+%setup
+#section are first executed on the host system outside of the container after the base OS has been installed. . You can reference the container file system with the $SINGULARITY_ROOTFS environment variable in the %setup section
+
+
+%files
+#The %files section allows you to copy files into the container with greater safety than using the %setup section. Its general form is
+#Useless for now.
+
+%environment
+  #Define environment variable that will be executed at each runtime.
+  export TF_FORCE_UNIFIED_MEMORY=1
+  export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
+  export OPENMM_CPU_THREADS=32
+  export CUDA=11.1
+  export PATH=/opt/mmseqs/bin/:$PATH
+
+  #PATH
+  export PATH=/usr/local/cuda-11.1/bin:$PATH
+  export LD_LIBRARY_PATH=/usr/local/cuda-11.1/lib64:$LD_LIBRARY_PATH
+  export PATH=/opt/conda/bin:$PATH
+  export XDG_CACHE_HOME=/opt/cache
+  export COLABFOLDDIR=/opt/conda/lib/python3.7/site-packages/colabfold
+
+
+%post -c /bin/bash
+
+  #Redefine the variables
+  export CUDA=11.1
+  export XDG_CACHE_HOME=/opt/cache
+  export COLABFOLDDIR=/opt/conda/lib/python3.7/site-packages/colabfold
+
+
+  #Install necessary packages
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        build-essential \
+        cmake \
+        cuda-command-line-tools-${CUDA/./-} \
+        git \
+        hmmer \
+        kalign \
+        tzdata \
+        wget \
+        curl \
+        vim \
+        git \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libfreetype6
+  rm -Rf /var/lib/apt/lists/*
+
+  #Install MMSEQS
+  (cd  /opt;
+  wget https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz;
+   tar xvfz mmseqs-linux-avx2.tar.gz;
+    rm mmseqs-linux-avx2.tar.gz)
+  
+  export PATH=/opt/mmseqs/bin/:$PATH
+
+
+
+  # Install Miniconda package manager.
+  wget -q -P /tmp \
+    https://repo.anaconda.com/miniconda/Miniconda3-py37_4.9.2-Linux-x86_64.sh \
+      && bash /tmp/Miniconda3-py37_4.9.2-Linux-x86_64.sh -b -p /opt/conda \
+      && rm /tmp/Miniconda3-py37_4.9.2-Linux-x86_64.sh
+
+  #Add conda in the PATH.
+  export PATH=/opt/conda/bin:$PATH
+
+
+  # Install necessary soft with conda.
+  # conda update -qy conda \
+  #    && 
+  conda install -y -c bioconda -c conda-forge \
+        openmm=7.5.1 \
+        pdbfixer \
+        pip \
+        kalign3=3.2.2 \
+        hhsuite=3.3.0
+        #cudatoolkit==${CUDA} \
+
+
+
+  #Install alignment tools.
+  #conda install -c conda-forge -c bioconda kalign3=3.2.2 hhsuite=3.3.0 -y
+
+  
+  #Install ColabFold and Jaxlib
+  #UPDATE ALPHAFOLD 2.3
+  pip install -q --no-warn-conflicts "colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold"
+  pip install https://storage.googleapis.com/jax-releases/cuda11/jaxlib-0.3.25+cuda11.cudnn805-cp37-cp37m-manylinux2014_x86_64.whl
+
+
+  #Patch Colabfold batch.py to remove environment variable for GPU memory. Those variable are setted up externally.
+  (cd  /opt/conda/lib/python3.7/site-packages/colabfold/; wget https://raw.githubusercontent.com/tubiana/colabfold_singularity/main/remove_environ_variable.patch; patch -s -p0 < remove_environ_variable.patch; rm remove_environ_variable.patch)
+
+  # #Apply patches and parameters
+  # cd $COLABFOLDDIR
+  # sed -i -e "s#props_path = \"stereo_chemical_props.txt\"#props_path = \"${COLABFOLDDIR}/stereo_chemical_props.txt\"#" batch.py
+  # wget -q https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
+  # wget https://raw.githubusercontent.com/deepmind/alphafold/main/docker/openmm.patch
+  # (cd  /opt/conda/lib/python3.7/site-packages; wget https://raw.githubusercontent.com/deepmind/alphafold/main/docker/openmm.patch; patch -s -p0 < openmm.patch; rm openmm.patch)
+  # (cd  /opt/conda/lib/python3.7/site-packages/colabfold/; wget https://raw.githubusercontent.com/tubiana/colabfold_singularity/main/matplotlib.patch; patch -s -p0 < matplotlib.patch; rm matplotlib.patch)
+
+%labels
+  author thibault Tubiana
+
+%help
+  Singularity for running colabfold localy. 
+  NOTE :
+   - databases like Uniref30 or other are too big to be place in the containers. Therefore your need to download them and place them outside (check https://colabfold.mmseqs.com). Give this folder later to the picture (see usage).
+   - alphafold paramerters are downloaded outsite the container as well. You will need to give a specific folder for that as well.
+  
+  USAGE:
+   1. Define location folder of 
+      - MMSEQS: bin folder of MMSEQS
+      - DATABASES: Root folder that the database (should have "uniref30" inside etc..)
+      - FASTA_DIR: folder that will contain the fasta file
+      - PARAMS_DIR: fodler that will contain Alphafold Cache File, correspond to XDG_CACHE_HOME
+      - MSA_DIR: Folder that will contain the multiple sequence alignment file
+      - PRED_DIR: Folder that will contain the predictions
+      - IMAGESINGULAIRTY: alias for the singularity container location.
+
+   2. You can setup a shortcut for the singularity container with:
+      SINGULARITYCOMAND="singularity exec \
+    -B ${MMSEQS}:/programs\
+    -B ${DATABASES}:/alpha/database\
+    -B ${FASTA_DIR}:/inout/fasta\
+    -B ${PARAMS_DIR}:/opt/cache\
+    -B ${MSA_DIR}:/inout/msas -B ${PRED_DIR}:/inout/predictions --nv ${IMAGESINGULARITY}"
+
+  3. Run colabfold_batch and colabfold_search with command like :
+  CUDA_VISIBLE_DEVICES=0 $SINGULARITYCOMAND colabfold_batch --model-type /inout/msas /inout/predictions
