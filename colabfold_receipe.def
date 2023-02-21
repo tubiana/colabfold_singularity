@@ -21,6 +21,7 @@ From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
   export PATH=/usr/local/cuda-11.1/bin:$PATH
   export LD_LIBRARY_PATH=/usr/local/cuda-11.1/lib64:$LD_LIBRARY_PATH
   export PATH=/opt/conda/bin:$PATH
+# XDG_CACHE_HOME needs to be overwritten at runtime
   export XDG_CACHE_HOME=/opt/cache
   export COLABFOLDDIR=/opt/conda/lib/python3.7/site-packages/colabfold
 
@@ -88,7 +89,11 @@ From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
   #Install alignment tools.
   #conda install -c conda-forge -c bioconda kalign3=3.2.2 hhsuite=3.3.0 -y
 
-  
+
+  #Install matplotlib-inline and ipython
+  conda install -y -c conda-forge matplotlib-inline ipython
+
+ 
   #Install ColabFold and Jaxlib
   #UPDATE ALPHAFOLD 2.3
   pip install -q --no-warn-conflicts "colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold@beta"
