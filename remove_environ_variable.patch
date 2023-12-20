@@ -1,11 +1,12 @@
---- batch.py    2023-02-05 15:14:15.610485278 +0100
-+++ batch_patch.py      2023-02-05 15:14:31.074484613 +0100
-@@ -1,8 +1,6 @@
+--- batch.py	2023-12-20 14:28:10.289634748 +0100
++++ batch_patch.py	2023-12-20 14:30:13.637629445 +0100
+@@ -1,9 +1,6 @@
  from __future__ import annotations
  
  import os
--os.environ["TF_FORCE_UNIFIED_MEMORY"] = "1"
--os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "2.0"
+-ENV = {"TF_FORCE_UNIFIED_MEMORY":"1", "XLA_PYTHON_CLIENT_MEM_FRACTION":"4.0"}
+-for k,v in ENV.items():
+-    if k not in os.environ: os.environ[k] = v
  
- import json
- import logging
+ import warnings
+ from Bio import BiopythonDeprecationWarning # what can possibly go wrong...

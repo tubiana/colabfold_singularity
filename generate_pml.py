@@ -74,13 +74,12 @@ else:
 
 pml = f"""
 from pymol import cmd
-#cmd.run('http://pldserver1.biochem.queensu.ca/~rlc/work/pymol/align_all.py')
 
 {cmdload}
 {rename}
 
 #Align on first model
-align_all {Path(models[0]).stem},  b>70
+extra_fit b>70, {Path(models[0]).stem}
 
 {groupcmd}
 
