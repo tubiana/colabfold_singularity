@@ -2,19 +2,19 @@
 
 
 # 1. ===== PARAMETER SETINGS <- NEED TO BE MODIFY AT EVERYRUN ========
-JOBNAME="CHANGEME"  #<--- name of the the fasta file, WITHOUT the extension
+JOBNAME=sequence  #<--- name of the the fasta file, WITHOUT the extension
 FASTA_DIR=`pwd` #DIRECTORY OF THE FASTA FILE
 echo "DIR = ${FASTA_DIR}"
 
 #  Default Options. Change it if you want :-) 
 MODELTYPE="auto" #COULD BE AlphaFold2-multimer-v1, AlphaFold2-multimer-v2, AlphaFold2-ptm, auto
-MINIMISATION="--amber --use-gpu-relax" # COMMENT To remove minimisation
-NUMRECYCLE=3 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
+#MINIMISATION="--amber --use-gpu-relax" # COMMENT To remove minimisation
+NUMRECYCLE=6 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
 
 DBLOADMODE=3 #3 = faster reading but do not take advantage of cached files. 2 is faster when the databse is already in the memory.
 USEENV=1 # 0 = do not use environmental database, 1=Use environmentale databse. 
 
-DOALIGNMENT=true # Comment or set to false if you already have a folder called "msas" with an a3m MSA inside.
+#DOALIGNMENT=true # Comment or set to false if you already have a folder called "msas" with an a3m MSA inside.
 DOMODELS=true # Comment or set to false if you don't want to make the models (only generate MSAS)
 GPUINDEX=0 #For multiGPU nodes, select only the GPU 0. Change to your favourite GPU number!
 
@@ -25,7 +25,7 @@ MSA_DIR=${FASTA_DIR}/msas #FOLDER THAT WILL CONTAIN THE MSA
 PRED_DIR=${FASTA_DIR}/predictions #FOLDER THAT WILL CONTAIN PREDICTIONS
 PARAMS_DIR=/mnt/DATASPEED/alphafold/params
 DATABASES=/mnt/DATASPEED/alphafold/database
-IMAGESINGULARITY=/mnt/DATASPEED/alphafold/container/colabfold_current.sif #LOCATION OF THE SINGULARITY IMAGE
+IMAGESINGULARITY=/mnt/DATASPEED/alphafold/container/colabfold_2.3_130223.sif #LOCATION OF THE SINGULARITY IMAGE
 
 # 3. ==== Creation of the output dir in the $FASTA_DIR
 mkdir -p ${FASTA_DIR} &> /dev/null
@@ -89,7 +89,7 @@ fi
 if [ "$DOMODELS" == true ]; then
   echo "-- Doing models --"
   touch makingModels
-  CUDA_VISIBLE_DEVICES=$GPUINDEX $SINGULARITYCOMAND colabfold_batch --model-type ${MODELTYPE} $MINIMISATION --num-recycle $NUMRECYCLE /inout/msas /inout/predictions
+  CUDA_VISIBLE_DEVICES=$GPUINDEX $SINGULARITYCOMAND colabfold_batch --model-type ${MODELTYPE} $MINIMISATION --num-recycle $NUMRECYCLE '/inout/fasta/'$FASTA_FILE /inout/predictions
   rm makingModels
   touch makingModelsDone
   

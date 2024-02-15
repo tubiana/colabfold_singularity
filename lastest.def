@@ -1,0 +1,123 @@
+Bootstrap: docker
+From: nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
+
+%setup
+#section are first executed on the host system outside of the container after the base OS has been installed. . You can reference the container file system with the $SINGULARITY_ROOTFS environment variable in the %setup section
+
+
+%files
+#The %files section allows you to copy files into the container with greater safety than using the %setup section. Its general form is
+#Useless for now.
+
+%environment
+  #Define environment variable that will be executed at each runtime.
+  export TF_FORCE_UNIFIED_MEMORY=1
+  export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
+  export OPENMM_CPU_THREADS=32
+  export CUDA=12.2
+  export PATH=/opt/mmseqs/bin/:$PATH
+
+  #PATH
+  export PATH=/usr/local/cuda-12/bin:$PATH
+  export CUDA_PATH=/usr/local/cuda-11.1
+  export LD_LIBRARY_PATH=/usr/local/cuda-11.1/lib64:$LD_LIBRARY_PATH
+  export PATH=/opt/conda/bin:$PATH
+# XDG_CACHE_HOME needs to be overwritten at runtime
+  export XDG_CACHE_HOME=/opt/cache
+
+
+
+%post -c /bin/bash
+
+  #Redefine the variables
+  export CUDA=11.1
+  export PYTHON_VERSION=3.10
+  export XDG_CACHE_HOME=/opt/cache
+
+
+
+  #Install necessary packages
+  apt-get update 
+  DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        build-essential \
+        cmake \
+        cuda-command-line-tools-${CUDA/./-} \
+        git \
+        hmmer \
+        kalign \
+        tzdata \
+        wget \
+        curl \
+        vim \
+        git \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libfreetype6
+  rm -Rf /var/lib/apt/lists/*
+
+  #Install MMSEQS
+  (cd  /opt;
+  wget https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz;
+   tar xvfz mmseqs-linux-avx2.tar.gz;
+    rm mmseqs-linux-avx2.tar.gz)
+  
+  export PATH=/opt/mmseqs/bin/:$PATH
+
+
+
+  # Install Miniconda package manager.
+  wget -q -P /tmp \
+    https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Linux-x86_64.sh \
+      && bash /tmp/Mambaforge-Linux-x86_64.sh -bfp /usr/local \
+      && mamba config --set auto_update_conda false \
+      && rm /tmp/Mambaforge-Linux-x86_64.sh
+
+
+    #pip install --no-warn-conflicts 'colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold'
+    #pip install --upgrade dm-haiku
+    #pip install --upgrade "jax[cuda12_pip]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+    pip install --no-warn-conflicts "colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold" tensorflow==2.12.0
+    pip install https://storage.googleapis.com/jax-releases/cuda11/jaxlib-0.3.25+cuda11.cudnn82-cp310-cp310-manylinux2014_x86_64.whl
+    pip install jax==0.3.25 chex==0.1.6 biopython==1.79
+
+    ln -s /usr/local/lib/python3.10/site-packages/colabfold colabfold
+    ln -s /usr/local/lib/python3.10/site-packages/alphafold alphafold
+
+    
+    #Path for jax> 0.3.25 according to colabfold repo
+    sed -i 's/weights = jax.nn.softmax(logits)/logits=jnp.clip(logits,-1e8,1e8);weights=jax.nn.softmax(logits)/g' alphafold/model/modules.py
+
+
+
+
+    mamba install -q -y -c conda-forge -c bioconda kalign2=2.04 hhsuite=3.3.0 openmm=7.7.0 python=$PYTHON_VERSION pdbfixer matplotlib-inline ipython
+
+%labels
+  author thibault Tubiana
+
+%help
+  Singularity for running colabfold localy. 
+  NOTE :
+   - databases like Uniref30 or other are too big to be place in the containers. Therefore your need to download them and place them outside (check https://colabfold.mmseqs.com). Give this folder later to the picture (see usage).
+   - alphafold paramerters are downloaded outsite the container as well. You will need to give a specific folder for that as well.
+  
+  USAGE:
+   1. Define location folder of 
+      - MMSEQS: bin folder of MMSEQS
+      - DATABASES: Root folder that the database (should have "uniref30" inside etc..)
+      - FASTA_DIR: folder that will contain the fasta file
+      - PARAMS_DIR: fodler that will contain Alphafold Cache File, correspond to XDG_CACHE_HOME
+      - MSA_DIR: Folder that will contain the multiple sequence alignment file
+      - PRED_DIR: Folder that will contain the predictions
+      - IMAGESINGULAIRTY: alias for the singularity container location.
+
+   2. You can setup a shortcut for the singularity container with:
+      SINGULARITYCOMAND="singularity exec \
+    -B ${MMSEQS}:/programs\
+    -B ${DATABASES}:/alpha/database\
+    -B ${FASTA_DIR}:/inout/fasta\
+    -B ${PARAMS_DIR}:/opt/cache\
+    -B ${MSA_DIR}:/inout/msas -B ${PRED_DIR}:/inout/predictions --nv ${IMAGESINGULARITY}"
+
+  3. Run colabfold_batch and colabfold_search with command like :
+  CUDA_VISIBLE_DEVICES=0 $SINGULARITYCOMAND colabfold_batch --model-type /inout/msas /inout/predictions
