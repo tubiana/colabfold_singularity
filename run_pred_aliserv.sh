@@ -108,6 +108,9 @@ if [ "$DOMODELS" == true ]; then
       mv ${seq}_relaxed_rank*.pdb $seq >/dev/null 2>&1
       mv ${seq}_unrelaxed_rank*.pdb $seq >/dev/null 2>&1
       mv ${seq}_unrelaxed_rank*.json $seq >/dev/null 2>&1
+      mv ${seq}_scores*.json  $seq >/dev/null 2>&1
+      mv ${seq}_predicted*.json $seq >/dev/null 2>&1
+      mv ${seq}_env $seq >/dev/null 2>&1
     done
   fi
   cd ..
