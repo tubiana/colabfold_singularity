@@ -25,7 +25,7 @@ MSA_DIR=${FASTA_DIR}/msas #FOLDER THAT WILL CONTAIN THE MSA
 PRED_DIR=${FASTA_DIR}/predictions #FOLDER THAT WILL CONTAIN PREDICTIONS
 PARAMS_DIR=/mnt/DATASPEED/alphafold/params
 DATABASES=/mnt/DATASPEED/alphafold/database
-IMAGESINGULARITY=/mnt/DATASPEED/alphafold/container/colabfold_2.3_130223.sif #LOCATION OF THE SINGULARITY IMAGE
+IMAGESINGULARITY=/mnt/DATASPEED/alphafold/container/colabfold_current.sif #LOCATION OF THE SINGULARITY IMAGE
 
 # 3. ==== Creation of the output dir in the $FASTA_DIR
 mkdir -p ${FASTA_DIR} &> /dev/null
