@@ -9,7 +9,8 @@ echo "DIR = ${FASTA_DIR}"
 #  Default Options. Change it if you want :-) 
 MODELTYPE="auto" #COULD BE AlphaFold2-multimer-v1, AlphaFold2-multimer-v2, AlphaFold2-ptm, auto
 #MINIMISATION="--amber --use-gpu-relax" # COMMENT To remove minimisation
-NUMRECYCLE=6 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
+NUMRECYCLE=12 #Number of recycling of each model. should be 3 at minimum to improve a bit models.
+REPEAT=3
 
 DBLOADMODE=3 #3 = faster reading but do not take advantage of cached files. 2 is faster when the databse is already in the memory.
 USEENV=1 # 0 = do not use environmental database, 1=Use environmentale databse. 
@@ -89,7 +90,7 @@ fi
 if [ "$DOMODELS" == true ]; then
   echo "-- Doing models --"
   touch makingModels
-  CUDA_VISIBLE_DEVICES=$GPUINDEX $SINGULARITYCOMAND colabfold_batch --model-type ${MODELTYPE} $MINIMISATION --num-recycle $NUMRECYCLE '/inout/fasta/'$FASTA_FILE /inout/predictions
+  CUDA_VISIBLE_DEVICES=$GPUINDEX $SINGULARITYCOMAND colabfold_batch --model-type ${MODELTYPE} $MINIMISATION --num-seeds $REPEAT--num-recycle $NUMRECYCLE '/inout/fasta/'$FASTA_FILE /inout/predictions
   rm makingModels
   touch makingModelsDone
   
@@ -111,6 +112,7 @@ if [ "$DOMODELS" == true ]; then
       mv ${seq}_scores*.json  $seq >/dev/null 2>&1
       mv ${seq}_predicted*.json $seq >/dev/null 2>&1
       mv ${seq}_env $seq >/dev/null 2>&1
+      mv ${seq}_pairgreedy $seq >/dev/null 2>&1
     done
   fi
   cd ..

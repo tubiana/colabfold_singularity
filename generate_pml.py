@@ -52,7 +52,7 @@ if numfolder > 2:
         else:
             relaxed_or_notrelaxed[f] = "unrelaxed"
             cmdload = cmdload+f'loadall predictions/{f}/*_unrelaxed*.pdb\n'
-            rename = "alter chain B, chain='A'\nalter chain C, chain='B'\n"
+            #rename = "alter chain B, chain='A'\nalter chain C, chain='B'\n"
             labelRelaxed = "noMini"
             #cmdload = cmdload+f'loadall predictions/{f}/*_relaxed*.pdb, {f}\n'
         groupcmd = groupcmd + f"group {f}, {f}_*\n"
