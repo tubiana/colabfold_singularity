@@ -90,7 +90,7 @@ fi
 if [ "$DOMODELS" == true ]; then
   echo "-- Doing models --"
   touch makingModels
-  CUDA_VISIBLE_DEVICES=$GPUINDEX $SINGULARITYCOMAND colabfold_batch --model-type ${MODELTYPE} $MINIMISATION --num-seeds $REPEAT--num-recycle $NUMRECYCLE '/inout/fasta/'$FASTA_FILE /inout/predictions
+  CUDA_VISIBLE_DEVICES=$GPUINDEX $SINGULARITYCOMAND colabfold_batch --model-type ${MODELTYPE} $MINIMISATION --num-seeds $REPEAT --num-recycle $NUMRECYCLE '/inout/fasta/'$FASTA_FILE /inout/predictions
   rm makingModels
   touch makingModelsDone
   
